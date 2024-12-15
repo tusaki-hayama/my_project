@@ -8,7 +8,7 @@ class arg:
                r"\课程项目\archive\train_images")
     f_test = (r"C:\Users\86134\Desktop\作业\0重修\神经网络深度学习"
               r"\课程项目\archive\test_images")
-    epochs = 1000000
+    epochs = 1000000000
     batch_size = 64
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     loss = nn.MSELoss(reduction='sum')
