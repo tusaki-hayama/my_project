@@ -17,9 +17,9 @@ class arg:
     test_names = os.listdir(f_test)[:]
     test_num = len(test_names)
     p_noise = 0.5
-    model_path = 'save_model/mseCoder2/'
-    train_log_path = 'train_log/trainlog.txt'
-    test_log_path = 'train_log/testlog.txt'
+    model_path = 'save_model/mseCoder3/'
+    train_log_path = 'train_log/log3/trainlog.txt'
+    test_log_path = 'train_log/log3/testlog.txt'
     pass
 
 

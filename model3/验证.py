@@ -1,6 +1,10 @@
+import random
+
 from 模型 import coder
 import torch
 import os
+import re
+import matplotlib.pyplot as plot
 from PIL import Image
 from torchvision import transforms
 from 配置 import arg
@@ -11,9 +15,40 @@ val_data_folder = arg.f_test
 val_name = arg.test_names
 val_num = arg.test_num
 val_model = coder()
-val_model.load_state_dict(torch.load('save_model/mseCoder2/mseModel20.555905677995835.pt'))
+val_model.load_state_dict(torch.load('save_model/mseCoder3/mseModel10.347612431388017.pt'))
 val_model.eval()
 val_model.to(arg.device)
+train_log_name = arg.train_log_path
+test_log_name = arg.test_log_path
+train_color = (255, 0, 255)
+test_color = (255, 255, 0)
+train_dict = {'x': [], 'y': []}
+test_dict = {'x': [], 'y': []}
+with open(arg.train_log_path, 'r', encoding='utf') as log:
+    while True:
+        rlog = log.readline()
+        if not rlog:
+            print('训练日志处理完毕')
+            break
+        rlog = rlog.split(':')
+        # print(rlog)
+        train_dict['x'].append(int(rlog[1][:-11]))
+        train_dict['y'].append(float(rlog[2][:-1]))
+with open(arg.test_log_path, 'r', encoding='utf') as log:
+    while True:
+        rlog = log.readline()
+        if not rlog:
+            print('验证日志处理完毕')
+            break
+        rlog = rlog.split(':')
+        # print(rlog)
+        test_dict['x'].append(int(rlog[1][:-10]))
+        test_dict['y'].append(float(rlog[2][:-1]))
+plot.plot(train_dict['x'], train_dict['y'])
+plot.plot(test_dict['x'], test_dict['y'])
+plot.show()
+
+
 block_noise = torch.ones((49, 3, 28, 28))
 for i in range(7):
     for j in range(7):
@@ -47,7 +82,7 @@ def add_noise(image):
 img2tensor = transforms.ToTensor()
 tensor2img = transforms.ToPILImage()
 paper = Image.new('RGB', (28, 28 * 4))
-val_img = Image.open(val_data_folder + '//' + val_name[81])
+val_img = Image.open(val_data_folder + '//' + val_name[random.randint(0, val_num - 1)])
 # val_img = Image.open(r'C:\Users\86134\Pictures'
 #                       r'\Saved Pictures\HE)K@1D`8LR65UN1R{`_0@G.png').resize((28,28))
 

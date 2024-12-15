@@ -94,7 +94,7 @@ for epoch in range(arg.epochs):
         p_img = model.forward(b_img)
         e_img = model.forward(p_img)
         p_self_like = random.random()
-        loss = (1-p_self_like)*arg.loss(p_img, img) + p_self_like*arg.loss(e_img, p_img)
+        loss = (1-p_self_like)*arg.loss(e_img, img) + p_self_like*arg.loss(e_img, p_img)
         train_loss += loss.item()
         loss.backward()
         optimizer.step()
@@ -113,7 +113,7 @@ for epoch in range(arg.epochs):
         p_img = model.forward(b_img)
         e_img = model.forward(p_img)
         p_self_like = random.random()
-        loss = (1-p_self_like)*arg.loss(p_img, img) + p_self_like*arg.loss(e_img, p_img)
+        loss = (1-p_self_like)*arg.loss(e_img, img) + p_self_like*arg.loss(e_img, p_img)
         test_loss += loss.item()
     print('验证损失:', test_loss / arg.test_num)
     with open(arg.test_log_path, 'a+', encoding='utf') as log:
