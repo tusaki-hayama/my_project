@@ -93,8 +93,11 @@ for epoch in range(arg.epochs):
         b_img = add_noise(set_train[i]).clone()
         p_img = model.forward(b_img)
         e_img = model.forward(p_img)
-        p_self_like = random.random()
-        loss = (1-p_self_like)*arg.loss(e_img, img) + p_self_like*arg.loss(e_img, p_img)
+        p1 = 0.1+random.random()
+        p2 = 0.1+random.random()
+        p3 = 0.1+random.random()
+        p4 = p1+p2+p3
+        loss = (p1*arg.loss(e_img, img) + p2*arg.loss(e_img, p_img) + p3*arg.loss(p_img,img))/p4
         train_loss += loss.item()
         loss.backward()
         optimizer.step()
@@ -112,8 +115,11 @@ for epoch in range(arg.epochs):
         b_img = add_noise(set_test[i]).clone()
         p_img = model.forward(b_img)
         e_img = model.forward(p_img)
-        p_self_like = random.random()
-        loss = (1-p_self_like)*arg.loss(e_img, img) + p_self_like*arg.loss(e_img, p_img)
+        p1 = 0.1 + random.random()
+        p2 = 0.1 + random.random()
+        p3 = 0.1 + random.random()
+        p4 = p1 + p2 + p3
+        loss = (p1*arg.loss(e_img, img) + p2*arg.loss(e_img, p_img) + p3*arg.loss(p_img,img))/p4
         test_loss += loss.item()
     print('验证损失:', test_loss / arg.test_num)
     with open(arg.test_log_path, 'a+', encoding='utf') as log:

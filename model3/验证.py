@@ -15,7 +15,7 @@ val_data_folder = arg.f_test
 val_name = arg.test_names
 val_num = arg.test_num
 val_model = coder()
-val_model.load_state_dict(torch.load('save_model/mseCoder3/mseModel10.347612431388017.pt'))
+val_model.load_state_dict(torch.load('save_model/mseCoder4/mseModel10.232735732712985.pt'))
 val_model.eval()
 val_model.to(arg.device)
 train_log_name = arg.train_log_path
@@ -48,7 +48,6 @@ plot.plot(train_dict['x'], train_dict['y'])
 plot.plot(test_dict['x'], test_dict['y'])
 plot.show()
 
-
 block_noise = torch.ones((49, 3, 28, 28))
 for i in range(7):
     for j in range(7):
@@ -72,28 +71,47 @@ def add_noise(image):
     background = background * (block_noise[index_block])[0]
     background = background * (line_noise[index_line])[0]
     background = background * (big_noise[index_big])[0]
-    for i in range(1):
-        if i > arg.p_noise:
-            background[i] = 1
+    # print(background.shape)
+    # for i in range(1):
+    #     break
+    #     if 1 > arg.p_noise:
+    #         background[i] = 1
     return image * (background.to(arg.device))
     pass
 
 
 img2tensor = transforms.ToTensor()
 tensor2img = transforms.ToPILImage()
-paper = Image.new('RGB', (28, 28 * 4))
-val_img = Image.open(val_data_folder + '//' + val_name[random.randint(0, val_num - 1)])
-# val_img = Image.open(r'C:\Users\86134\Pictures'
-#                       r'\Saved Pictures\HE)K@1D`8LR65UN1R{`_0@G.png').resize((28,28))
-
-v = img2tensor(val_img).view(1, 3, 28, 28)
-b_v = add_noise(v.to(arg.device))
-b_img = tensor2img(b_v.view(3, 28, 28))
-p_v = val_model.forward(b_v)
-p_img = tensor2img(p_v.view(3, 28, 28))
-p_o_img = tensor2img(val_model.forward(v.to(arg.device)).view(3, 28, 28))
-paper.paste(val_img, (0, 0))
-paper.paste(b_img, (0, 28))
-paper.paste(p_img, (0, 56))
-paper.paste(p_o_img, (0, 28 * 3))
+check_num = 128
+paper = Image.new('RGB', (28 * check_num, 28 * 4))
+check_v = torch.zeros((check_num, 3, 28, 28))
+check_img = []
+print('加载测试子集')
+for i in tqdm(range(check_num)):
+    check_img.append(Image.open(arg.f_test + '//' + arg.test_names[random.randint(0, arg.test_num - 1)]))
+    check_v[i] = img2tensor(check_img[i])
+print('打印原始图片')
+for i in tqdm(range(check_num)):
+    paper.paste(check_img[i], (28 * i, 28*0))
+noise_v = add_noise(check_v.to(arg.device))
+noise_img = []
+for i in tqdm(range(check_num)):
+    noise_img.append(tensor2img(noise_v[i]))
+print('打印遮掩图片')
+for i in tqdm(range(check_num)):
+    paper.paste(noise_img[i], (28 * i, 28*2))
+print('打印预测图片')
+p_v = val_model.forward(noise_v)
+p_img = []
+for i in tqdm(range(check_num)):
+    p_img.append(tensor2img(p_v[i]))
+for i in tqdm(range(check_num)):
+    paper.paste(p_img[i], (28 * i, 28*3))
+print('原始图片重建')
+r_v = val_model.forward(check_v.to(arg.device))
+r_img = []
+for i in tqdm(range(check_num)):
+    r_img.append(tensor2img(r_v[i]))
+for i in tqdm(range(check_num)):
+    paper.paste(r_img[i], (28 * i, 28*1))
 paper.show()
