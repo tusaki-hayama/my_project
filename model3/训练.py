@@ -1,5 +1,4 @@
 import os
-
 import torch
 from 模型 import coder
 from 配置 import arg
@@ -93,13 +92,16 @@ for epoch in range(arg.epochs):
         img = set_train[i].clone()
         b_img = add_noise(set_train[i]).clone()
         p_img = model.forward(b_img)
-        e_img = model.forward(img)
-        loss = arg.loss(p_img, img) + arg.loss(e_img,p_img)
+        e_img = model.forward(p_img)
+        p_self_like = random.random()
+        loss = (1-p_self_like)*arg.loss(p_img, img) + p_self_like*arg.loss(e_img, p_img)
         train_loss += loss.item()
         loss.backward()
         optimizer.step()
     print('训练损失:', epoch, train_loss / arg.train_num)
-
+    with open(arg.train_log_path, 'a+', encoding='utf') as log:
+        log.write('epoch:{},train_loss:{}\n'.
+                  format(epoch, train_loss / arg.train_num))
     test_loss = 0
     if epoch % 10 != 3:
         continue
@@ -109,14 +111,17 @@ for epoch in range(arg.epochs):
         img = set_test[i].clone()
         b_img = add_noise(set_test[i]).clone()
         p_img = model.forward(b_img)
-        e_img = model.forward(img)
-        loss = arg.loss(p_img, img) + arg.loss(e_img,p_img)
+        e_img = model.forward(p_img)
+        p_self_like = random.random()
+        loss = (1-p_self_like)*arg.loss(p_img, img) + p_self_like*arg.loss(e_img, p_img)
         test_loss += loss.item()
     print('验证损失:', test_loss / arg.test_num)
-
+    with open(arg.test_log_path, 'a+', encoding='utf') as log:
+        log.write('epoch:{},test_loss:{}\n'.
+                  format(epoch, test_loss / arg.test_num))
     if test_loss < arg.best_loss:
         arg.best_loss = test_loss
-        file_address = 'save_model/mseCoder' + str(test_loss / arg.test_num) + '.pt'
+        file_address = arg.model_path + 'mseModel' + str(test_loss / arg.test_num) + '.pt'
         save_file.append(file_address)
         torch.save(model.state_dict(), file_address)
         if len(save_file) > 10:

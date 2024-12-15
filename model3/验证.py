@@ -11,7 +11,7 @@ val_data_folder = arg.f_test
 val_name = arg.test_names
 val_num = arg.test_num
 val_model = coder()
-val_model.load_state_dict(torch.load('save_model/mseCoder17.805472987992445.pt'))
+val_model.load_state_dict(torch.load('save_model/mseCoder2/mseModel20.555905677995835.pt'))
 val_model.eval()
 val_model.to(arg.device)
 block_noise = torch.ones((49, 3, 28, 28))
@@ -47,7 +47,7 @@ def add_noise(image):
 img2tensor = transforms.ToTensor()
 tensor2img = transforms.ToPILImage()
 paper = Image.new('RGB', (28, 28 * 4))
-val_img = Image.open(val_data_folder + '//' + val_name[68])
+val_img = Image.open(val_data_folder + '//' + val_name[81])
 # val_img = Image.open(r'C:\Users\86134\Pictures'
 #                       r'\Saved Pictures\HE)K@1D`8LR65UN1R{`_0@G.png').resize((28,28))
 
