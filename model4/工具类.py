@@ -1,4 +1,6 @@
 import os
+import random
+
 import torch
 from tqdm import tqdm
 from PIL import Image
@@ -97,6 +99,10 @@ def add_noise(image):
     z_noise = z_noise[torch.randperm(z_noise.shape[0])]
     background = torch.cumprod(z_noise[:batch_size], dim=0)
     background = background[torch.randperm(background.shape[0])]
+    p_noise = random.randint(1,100)
+    for b in range(batch_size):
+        if random.randint(1,100)<p_noise:
+            background[b] = 1
     return image * background.to(args.device)
 
 

@@ -22,12 +22,12 @@ class args:
     # 噪声配置
     noise_setting = {'size': (3, 64, 64),'len':64}
     # 训练部分
-    use_model2train = False
-    use_model_path = ''
-    save_model_path = 'model4/模型保存/模型1'
-    train_log_path = 'model4/日志/日志1/train_log.txt'
-    val_log_path = 'model4/日志/日志1/val_log.txt'
-    test_model_name = ''
+    use_model2train = True
+    use_model_path = '模型保存/模型1/checkpointEpoch_57Loss_516.4882251469776.pth'
+    save_model_path = '模型保存/模型1'
+    train_log_path = '日志/日志1/train_log.txt'
+    val_log_path = '日志/日志1/val_log.txt'
+    test_model_name = '模型保存/模型1/checkpointEpoch_102Loss_166.75022202308733.pth'
     epochs = 1000000000
     epoch = 0
     batch_size = 128
