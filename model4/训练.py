@@ -1,6 +1,5 @@
 import torch
 from torch import nn, optim
-from torchvision import transforms
 from model4.配置 import args
 from 模型 import auto_encoder
 from 工具类 import img2tensor, tensor2img, load_data, add_noise
@@ -9,7 +8,7 @@ import random
 
 #
 device = args.device
-epochs = args.epoch
+epochs = args.epochs
 batch_size = args.batch_size
 study_rare = args.study_rare
 f_train_img = args.f_train_img
@@ -38,27 +37,45 @@ optimizer = optim.Adam(model.parameters(), lr=study_rare)
 train_tensor = load_data(f_train_img,
                          batch_size, 3, args.img_size, args.img_size,
                          end_flag='训练集加载完成'
-                         )
+                         ).to(device)
 print('训练集大小,{}'.format(train_tensor.shape))
 val_tensor = load_data(f_val_img,
                        batch_size, 3, args.img_size, args.img_size,
                        end_flag='验证集加载完成'
-                       )
+                       ).to(device)
 print('验证集大小,{}'.format(val_tensor.shape))
 
-for e in tqdm(range(epochs)):
+for e in range(epoch, epochs):
     model.train()
     train_loss = 0
-    print(222)
-    for b in range(297):
+    for b in tqdm(range(train_tensor.shape[0]), desc='训练批次中'):
         optimizer.zero_grad()
-        img = train_tensor[b].clone()
-        b_img = add_noise(train_tensor[b])
+        img = (train_tensor[b].clone())
+        b_img = add_noise(img.to(device))
         p1_img = model.forward(b_img)
         p2_img = model.forward(p1_img)
         loss = mse_loss(p1_img, img) + mse_loss(p2_img, img)
         train_loss += loss.item()
         loss.backward()
         optimizer.step()
-    print('训练轮数{},每批次训练损失:{}'.format(epoch, train_loss / train_tensor.shape[0]))
+    print('训练轮数{},每批次训练损失:{}'.format(e, train_loss / train_tensor.shape[0]))
+    if epoch % 3 != 0:
+        continue
+
+    model.eval()
+    val_loss = 0
+    for b in tqdm(range(val_tensor.shape[0]), desc='验证批次中'):
+        img = (val_tensor[b].clone())
+        b_img = add_noise(img.to(device))
+        p1_img = model.forward(b_img)
+        p2_img = model.forward(p1_img)
+        loss = mse_loss(p1_img, img) + mse_loss(p2_img, img)
+        val_loss += loss.item()
+    print('验证轮数{},每批次验证损失:{}'.format(e, val_loss / val_tensor.shape[0]))
+    if val_loss < best_loss:
+        best_loss = val_loss
+        checkpoint['epoch'] = e
+        checkpoint['model_state_dict'] = model.state_dict()
+        torch.save(checkpoint,'epoch:{}loss:{}.pt'.format(e,best_loss))
+
 print(1111)

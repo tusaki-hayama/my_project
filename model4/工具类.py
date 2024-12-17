@@ -96,7 +96,8 @@ def add_noise(image):
     global z_noise
     z_noise = z_noise[torch.randperm(z_noise.shape[0])]
     background = torch.cumprod(z_noise[:batch_size], dim=0)
-    return image * background
+    background = background[torch.randperm(background.shape[0])]
+    return image * background.to(args.device)
 
 
 # val_tensor = load_data(args.f_val_img,

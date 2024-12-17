@@ -3,7 +3,7 @@ from torch import nn
 import torch
 from model4.配置 import args
 
-weight = torch.tensor([0.3, 0.6, 0.1]).view(1, 3, 1, 1)
+weight = (torch.tensor([0.3, 0.6, 0.1]).view(1, 3, 1, 1)).to(args.device)
 
 
 class auto_encoder(nn.Module):
