@@ -19,6 +19,8 @@ class args:
     l_val = 2
     l_test = 2
     img_size = 64
+    # 噪声配置
+    noise_setting = {'size': (3, 64, 64),'len':64}
     # 训练部分
     use_model2train = False
     use_model_path = ''
