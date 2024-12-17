@@ -20,12 +20,11 @@ class args:
     l_test = 2
     img_size = 64
     # 训练部分
-    f_train = ''
-    f_val = ''
-    f_test = ''
-    f_save_model = ''
-    train_log_path = ''
-    val_log_path = ''
+    use_model2train = False
+    use_model_path = ''
+    save_model_path = 'model4/模型保存/模型1'
+    train_log_path = 'model4/日志/日志1/train_log.txt'
+    val_log_path = 'model4/日志/日志1/val_log.txt'
     test_model_name = ''
     epochs = 1000000000
     epoch = 0
