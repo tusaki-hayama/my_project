@@ -15,7 +15,7 @@ val_data_folder = arg.f_test
 val_name = arg.test_names
 val_num = arg.test_num
 val_model = coder()
-val_model.load_state_dict(torch.load('save_model/mseCoder4/mseModel10.232735732712985.pt'))
+val_model.load_state_dict(torch.load('模型保存/mseCoder4/mseModel10.232735732712985.pt'))
 val_model.eval()
 val_model.to(arg.device)
 train_log_name = arg.train_log_path
