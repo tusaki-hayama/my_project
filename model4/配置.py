@@ -23,15 +23,15 @@ class args:
     noise_setting = {'size': (3, 64, 64),'len':64}
     # 训练部分
     use_model2train = True
-    use_model_path = '模型保存/模型1/checkpointEpoch_57Loss_516.4882251469776.pth'
+    use_model_path = '模型保存/模型1/checkpointEpoch_666Loss_114.90548013181103.pth'
     save_model_path = '模型保存/模型1'
     train_log_path = '日志/日志1/train_log.txt'
     val_log_path = '日志/日志1/val_log.txt'
-    test_model_name = '模型保存/模型1/checkpointEpoch_102Loss_166.75022202308733.pth'
+    test_model_name = '模型保存/模型1/checkpointEpoch_666Loss_114.90548013181103.pth'
     epochs = 1000000000
     epoch = 0
-    batch_size = 128
-    study_rare = 1e-4
+    batch_size = 256
+    study_rare = 1e-6
     mse_loss = nn.MSELoss(reduction='sum')
     cross_loss = nn.CrossEntropyLoss(reduction='sum')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

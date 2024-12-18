@@ -59,8 +59,8 @@ for e in range(epoch, epochs):
         b_img = add_noise(img.to(device))
         p1_img = model.forward(b_img)
         p2_img = model.forward(p1_img)
-        p1 = 0.6 + random.random()
-        p2 = 0.3 + random.random()
+        p1 = 0.1 + random.random()
+        p2 = 0.1 + random.random()
         p3 = 0.1 + random.random()
         p4 = p1 + p2 + p3
         loss = (p1*mse_loss(p1_img, img) + p2*mse_loss(p2_img, img) + p3*mse_loss(p1_img, p2_img))/p4
@@ -78,8 +78,8 @@ for e in range(epoch, epochs):
         b_img = add_noise(img.to(device))
         p1_img = model.forward(b_img)
         p2_img = model.forward(p1_img)
-        p1 = 0.6 + random.random()
-        p2 = 0.3 + random.random()
+        p1 = 0.1 + random.random()
+        p2 = 0.1 + random.random()
         p3 = 0.1 + random.random()
         p4 = p1 + p2 + p3
         loss = (p1 * mse_loss(p1_img, img) + p2 * mse_loss(p2_img, img) + p3 * mse_loss(p1_img, p2_img)) / p4
