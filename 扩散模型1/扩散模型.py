@@ -7,41 +7,18 @@ class diffusion_model(nn.Module):
     def __init__(self):
         super(diffusion_model, self).__init__()
         self.conv = nn.Sequential(
-            nn.Conv2d(3, 9, 3, stride=3),
+            nn.Conv2d(3,6,3),
+            nn.MaxPool2d(6),
             nn.ReLU(),
-            nn.Conv2d(9, 27, 4, stride=2),
-            nn.ReLU(),
-            nn.Conv2d(27, 64, 2, stride=2),
-            nn.ReLU(),
-            nn.Flatten()
-        )
-        self.line = nn.Sequential(
-            nn.Linear(1026, 256),
-            nn.ReLU(),
-            nn.Linear(256, 128),
-            nn.ReLU(),
-            nn.Linear(128, 256),
-            nn.ReLU(),
-            nn.Linear(256, 1024),
-            nn.ReLU()
-        )
-        self.de_conv = nn.Sequential(
-            nn.ConvTranspose2d(64, 27, 2, 2),
-            nn.ReLU(),
-            nn.ConvTranspose2d(27, 9, 3, 4),
-            nn.ReLU(),
-            nn.ConvTranspose2d(9, 3, 4, 2),
-            nn.Sigmoid()
+
         )
         pass
 
-    def forward(self, batch_img, batch_steps):
+    def forward(self, batch_img):
         x = self.conv(batch_img)
-        x = torch.cat([x, batch_steps], dim=1)
-        x = self.line(x)
-        x = x.view((-1, 64, 4, 4))
-        x = self.de_conv(x)
-        return x
+
+        print(x.shape)
+        return
         pass
 
 
@@ -57,4 +34,4 @@ test_model = diffusion_model()
 b_steps = torch.zeros((1, 2))
 b_steps[:, 0] = 0.1
 b_steps[:, 1] = 0.2
-test_model.forward(v_img, b_steps)
+test_model.forward(v_img)

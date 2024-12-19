@@ -8,23 +8,23 @@ import random
 
 max_step = 10
 batch_size = 64
-study_rare = 1e-4
+study_rare = 1e-8
 epochs = 1000000000
 l = torch.linspace(0, 1, steps=max_step)
 print('步幅:{}'.format(l))
 
 f_train = (r'C:\Users\86134\Desktop\作业\0重修\神经网络深度学习'
            r'\课程项目\archive\TRAIN')
-f_test = (r'C:\Users\86134\Desktop\作业\0重修\神经网络深度学习'
-          r'\课程项目\archive\TEST')
+f_val = (r'C:\Users\86134\Desktop\作业\0重修\神经网络深度学习'
+         r'\课程项目\archive\VAL')
 train_data = load_data(f_train, batch_size, 3, 64, 64,
                        '训练集加载完成')
-test_data = load_data(f_test, batch_size, 3, 64, 64,
-                      '测试集加载完成')
+val_data = load_data(f_val, batch_size, 3, 64, 64,
+                     '测试集加载完成')
 
 model = diffusion_model()
 optimizer = optim.Adam(model.parameters(), lr=study_rare)
-mse_loss = nn.CrossEntropyLoss(reduction='sum')
+mse_loss = nn.MSELoss(reduction='sum')
 for epoch in range(epochs):
     model.train()
     # 抽一张图片
@@ -50,7 +50,6 @@ for epoch in range(epochs):
     train_loss.backward()
     optimizer.step()
     print('第{}次训练,噪声强度{},训练损失{}'.format(epoch, noise_level, train_loss.item()))
-    if epoch % 10000 == 9999:
+    if epoch % 10000 == 1000:
         torch.save(model.state_dict(), 'first_model.pt')
-        break
     pass
