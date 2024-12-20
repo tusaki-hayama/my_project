@@ -32,14 +32,16 @@ def load_tensor_data(f_img, batch_size, channel, height, width, end_msg=None):
 
 def random_noise(batch_size):
     noise = torch.ones((batch_size, 3, 64, 64))
+    p_noise = random.random()
     for bs in range(batch_size):
+        if random.random() > p_noise:
+            continue
         x, y = random.randint(0, 32), random.randint(0, 32)
         height = random.randint(16, 32)
         width = random.randint(16, 32)
         noise[bs, :, x:x + height, y:y + width] = 0
     return noise
     pass
-
 
 # noise = random_noise(64)
 # blackboard = Image.new('RGB', (64 * 64, 64))

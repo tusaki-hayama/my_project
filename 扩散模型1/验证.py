@@ -8,7 +8,7 @@ import random
 from PIL import Image
 
 model = diffusion_model()
-model.load_state_dict(torch.load('first_model.pt'))
+model.load_state_dict(torch.load('best_model4162086.76171875.pt'))
 
 max_step = 10
 batch_size = 64

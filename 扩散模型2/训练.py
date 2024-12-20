@@ -8,7 +8,7 @@ from 扩散模型 import diffusion_model
 from tqdm import tqdm
 
 batch_size = 64
-study_rare = 1e-5
+study_rare = 1e-4
 epochs = 100000000000
 epoch = 0
 best_val_loss = float('inf')
@@ -42,9 +42,10 @@ while epoch < epochs:
         train_loss += loss.item()
         loss.backward()
         optimizer.step()
-    print('本{}轮训练单图片损失为:{}'.format(epoch, train_loss / (train_data.shape[0] * train_data.shape[1])))
+    print('第{}轮训练,单图片损失为:{}'.format(epoch, train_loss / (train_data.shape[0] * train_data.shape[1])))
     pass
     if epoch % 3 != 0:
+        epoch += 1
         continue
     model.eval()
     val_loss = 0
@@ -55,14 +56,20 @@ while epoch < epochs:
         pY = model.forward(X)
         loss = mse_loss(pY, Y)
         val_loss += loss.item()
+    print('第{}轮验证,单图片损失为:{}'.format(epoch, val_loss / (val_data.shape[0] * val_data.shape[1])))
+
     if val_loss < best_val_loss:
         best_val_loss = val_loss
-        model_name = 'best_model{}.pt'.format(val_loss)
+        model_name = 'model_epoch_{}_loss_{}.pt'.format(epoch,val_loss / (val_data.shape[0] * val_data.shape[1]))
         model_list.append(model_name)
         torch.save(model.state_dict(), model_name)
         if len(model_list) > 10:
             del_name = model_list[0]
             model_list.pop(0)
-            os.remove(del_name)
+            try:
+                os.remove(del_name)
+            except Exception as e:
+                print(e.args)
+                pass
 
     epoch += 1

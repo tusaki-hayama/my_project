@@ -100,7 +100,7 @@ class diffusion_model(nn.Module):
 #         print(dx3.shape)
         dx4 = self.de_conv4(x4)
 #         print(dx4.shape)
-        return torch.sigmoid(dx1+dx2+dx3+dx4)
+        return dx1+dx2+dx3+dx4
         pass
 
 
