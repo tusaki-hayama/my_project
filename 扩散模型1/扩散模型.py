@@ -7,18 +7,40 @@ class diffusion_model(nn.Module):
     def __init__(self):
         super(diffusion_model, self).__init__()
         self.conv = nn.Sequential(
-            nn.Conv2d(3,6,3),
-            nn.MaxPool2d(6),
+            nn.Conv2d(3, 6, 3),
+            nn.MaxPool2d(2),
             nn.ReLU(),
-
+            nn.Conv2d(6, 12, 2),
+            nn.MaxPool2d(2),
+            nn.ReLU(),
+            nn.Conv2d(12, 24, 2),
+            nn.MaxPool2d(2),
+            nn.ReLU(),
+            nn.Flatten(),
+            nn.Linear(24 * 7 * 7, 128),
+            nn.ReLU(),
+            nn.Linear(128, 1024),
+            nn.Unflatten(dim=1, unflattened_size=(64, 4, 4)),
+            nn.ConvTranspose2d(64, 32, 3),
+            nn.ConvTranspose2d(32, 32, 2, 2),
+            nn.ReLU(),
+            nn.ConvTranspose2d(32, 16, 3),
+            nn.ConvTranspose2d(16, 16, 2, 2),
+            nn.ReLU(),
+            nn.ConvTranspose2d(16, 8, 3),
+            nn.ConvTranspose2d(8, 8, 2, 2),
+            nn.ReLU(),
+            nn.ConvTranspose2d(8, 4, 3),
+            nn.ConvTranspose2d(4, 3, 3),
+            nn.ReLU()
         )
         pass
 
     def forward(self, batch_img):
+
         x = self.conv(batch_img)
 
-        print(x.shape)
-        return
+        return torch.sigmoid(x)
         pass
 
 

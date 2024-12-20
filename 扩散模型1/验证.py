@@ -5,6 +5,7 @@ from 工具类 import load_data, img2tensor, tensor2img, random_noise
 from 扩散模型 import diffusion_model
 from tqdm import tqdm
 import random
+from PIL import Image
 
 model = diffusion_model()
 model.load_state_dict(torch.load('first_model.pt'))
@@ -22,11 +23,13 @@ test_data = load_data(f_test, batch_size, 3, 64, 64,
 
 i = 0
 r_noise = random_noise()
-r_tensor = test_data[random.randint(0, 10)][random.randint(0, 10)]*r_noise
+r_tensor = test_data[random.randint(0, 10)][random.randint(0, 10)]
 model.eval()
 b_steps = torch.zeros((1, 2))
 b_steps[:, 0] = 9
 b_steps[:, 1] = 8
-re_image = model.forward(r_tensor.view(1, 3, 64, 64), b_steps)
-tensor2img(r_tensor.view(3, 64, 64)).show()
-tensor2img(re_image.view(3, 64, 64)).show()
+re_image = model.forward(r_tensor.view(1, 3, 64, 64))
+blackboard = Image.new('RGB', (64 * 1, 64 * 2))
+blackboard.paste(tensor2img(r_tensor.view(3, 64, 64)), (0, 64 * 0))
+blackboard.paste(tensor2img(re_image.view(3, 64, 64)), (0, 64 * 1))
+blackboard.show()

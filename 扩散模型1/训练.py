@@ -8,7 +8,7 @@ import random
 
 max_step = 10
 batch_size = 64
-study_rare = 1e-8
+study_rare = 1e-3
 epochs = 1000000000
 l = torch.linspace(0, 1, steps=max_step)
 print('步幅:{}'.format(l))
@@ -45,11 +45,13 @@ for epoch in range(epochs):
     b_steps[:, 0] = noise_level
     b_steps[:, 1] = noise_down_level
     optimizer.zero_grad()
-    re_image = model.forward(noise_img, b_steps)
+    re_image = model.forward(noise_img)
     train_loss = mse_loss(re_image, down_noise_img)
     train_loss.backward()
     optimizer.step()
     print('第{}次训练,噪声强度{},训练损失{}'.format(epoch, noise_level, train_loss.item()))
     if epoch % 10000 == 1000:
         torch.save(model.state_dict(), 'first_model.pt')
+        for group in optimizer.param_groups:
+            group['lr'] *= 0.95
     pass
