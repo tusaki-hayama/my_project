@@ -30,9 +30,13 @@ def load_tensor_data(f_img, batch_size, channel, height, width, end_msg=None):
     return data_tensor
 
 
+a = 0.5
+b = 0.9
+
+
 def random_noise(batch_size):
     noise = torch.ones((batch_size, 3, 64, 64))
-    p_noise = random.random()
+    p_noise = a + (b - a) * random.random()
     for bs in range(batch_size):
         if random.random() > p_noise:
             continue

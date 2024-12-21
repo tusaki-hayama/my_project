@@ -1,4 +1,5 @@
 import os
+import random
 
 import torch
 from torchvision import transforms
@@ -7,7 +8,7 @@ from 工具类 import load_tensor_data, random_noise
 from 扩散模型 import diffusion_model
 from tqdm import tqdm
 
-batch_size = 64
+batch_size = 256
 study_rare = 1e-4
 epochs = 100000000000
 epoch = 0
@@ -28,15 +29,16 @@ train_data.to(device)
 val_data.to(device)
 optimizer = optim.Adam(model.parameters(), lr=study_rare)
 mse_loss = nn.MSELoss(reduction='sum')
+cross_loss = nn.CrossEntropyLoss(reduction='sum')
 model_list = []
 while epoch < epochs:
     model.train()
     train_loss = 0
     for bs in tqdm(range(train_data.shape[0])):
         optimizer.zero_grad()
-        noise = random_noise(batch_size)
+        noise = random_noise(batch_size).to(device)
         Y = train_data[bs].to(device)
-        X = train_data[bs].to(device) * noise.to(device)
+        X = train_data[bs].to(device) * noise
         pY = model.forward(X)
         loss = mse_loss(pY, Y)
         train_loss += loss.item()
@@ -60,7 +62,7 @@ while epoch < epochs:
 
     if val_loss < best_val_loss:
         best_val_loss = val_loss
-        model_name = 'model_epoch_{}_loss_{}.pt'.format(epoch,val_loss / (val_data.shape[0] * val_data.shape[1]))
+        model_name = 'model_epoch_{}_loss_{}.pt'.format(epoch, val_loss / (val_data.shape[0] * val_data.shape[1]))
         model_list.append(model_name)
         torch.save(model.state_dict(), model_name)
         if len(model_list) > 10:

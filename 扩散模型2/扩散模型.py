@@ -7,77 +7,43 @@ class diffusion_model(nn.Module):
     def __init__(self):
         super(diffusion_model, self).__init__()
         self.conv1 = nn.Sequential(
-            nn.Conv2d(3, 6, 3),
-            nn.ReLU(),
-            nn.MaxPool2d(2)
-        )  # (bs,6,31,31)
+            nn.Conv2d(3, 6, 3, padding=1),
+            nn.MaxPool2d(2),
+            nn.ReLU()
+        )
         self.conv2 = nn.Sequential(
-            nn.Conv2d(6, 12, 3),
-            nn.ReLU(),
-            nn.MaxPool2d(2)
-        )  # (bs,12,14,14)
+            nn.Conv2d(6, 12, 3, padding=1),
+            nn.MaxPool2d(2),
+            nn.ReLU()
+        )
         self.conv3 = nn.Sequential(
-            nn.Conv2d(12, 24, 3),
-            nn.ReLU(),
-            nn.MaxPool2d(2)
-        )  # (bs,24,6,6)
+            nn.Conv2d(12, 24, 3, padding=1),
+            nn.MaxPool2d(2),
+            nn.ReLU()
+        )
         self.conv4 = nn.Sequential(
-            nn.Conv2d(24, 48, 3),
-            nn.ReLU(),
-            nn.MaxPool2d(2)
-        )  # (bs,48,2,2)
-        self.de_conv1 = nn.Sequential(
-            nn.ConvTranspose2d(6, 6, 2, 2),
-            nn.ReLU(),
-            nn.ConvTranspose2d(6, 3, 3),
+            nn.Conv2d(24, 48, 3, padding=1),
+            nn.MaxPool2d(2),
             nn.ReLU()
         )
-        self.de_conv2 = nn.Sequential(
-            nn.ConvTranspose2d(12, 12, 2, 2),
-            nn.ReLU(),
-            nn.ConvTranspose2d(12, 6, 3),
-            nn.ReLU(),
-            nn.ConvTranspose2d(6, 6, 2, 2),
-            nn.ReLU(),
-            nn.ConvTranspose2d(6, 3, 3),
-            nn.ReLU(),
-            nn.ConvTranspose2d(3, 3, 3),
-            nn.ReLU()
-        )
-        self.de_conv3 = nn.Sequential(
-            nn.ConvTranspose2d(24, 24, 2, 2),
-            nn.ReLU(),
-            nn.ConvTranspose2d(24, 12, 3),
-            nn.ReLU(),
-            nn.ConvTranspose2d(12, 12, 2, 2),
-            nn.ReLU(),
-            nn.ConvTranspose2d(12, 6, 3),
-            nn.ReLU(),
-            nn.ConvTranspose2d(6, 6, 2, 2),
-            nn.ReLU(),
-            nn.ConvTranspose2d(6, 3, 3),
-            nn.ReLU(),
-            nn.ConvTranspose2d(3, 3, 3),
-            nn.ReLU()
-        )
-        self.de_conv4 = nn.Sequential(
+        self.d_conv4 = nn.Sequential(
             nn.ConvTranspose2d(48, 48, 2, 2),
-            nn.ReLU(),
-            nn.ConvTranspose2d(48, 24, 3),
-            nn.ReLU(),
+            nn.ConvTranspose2d(48, 24, 3, padding=1),
+            nn.ReLU()
+        )
+        self.d_conv3 = nn.Sequential(
             nn.ConvTranspose2d(24, 24, 2, 2),
-            nn.ReLU(),
-            nn.ConvTranspose2d(24, 12, 3),
-            nn.ReLU(),
+            nn.ConvTranspose2d(24, 12, 3, padding=1),
+            nn.ReLU()
+        )
+        self.d_conv2 = nn.Sequential(
             nn.ConvTranspose2d(12, 12, 2, 2),
-            nn.ReLU(),
-            nn.ConvTranspose2d(12, 6, 3),
-            nn.ReLU(),
+            nn.ConvTranspose2d(12, 6, 3, padding=1),
+            nn.ReLU()
+        )
+        self.d_conv1 = nn.Sequential(
             nn.ConvTranspose2d(6, 6, 2, 2),
-            nn.ReLU(),
-            nn.ConvTranspose2d(6, 3, 3),
-            nn.ReLU(),
-            nn.ConvTranspose2d(3, 3, 3),
+            nn.ConvTranspose2d(6, 3, 3, padding=1),
             nn.ReLU()
         )
         pass
@@ -91,16 +57,16 @@ class diffusion_model(nn.Module):
 #         print(x3.shape)
         x4 = self.conv4(x3)
 #         print(x4.shape)
-#         print('de:')
-        dx1 = self.de_conv1(x1)
-#         print(dx1.shape)
-        dx2 = self.de_conv2(x2)
-#         print(dx2.shape)
-        dx3 = self.de_conv3(x3)
-#         print(dx3.shape)
-        dx4 = self.de_conv4(x4)
+#         print("back:")
+        dx4 = self.d_conv4(x4)
 #         print(dx4.shape)
-        return dx1+dx2+dx3+dx4
+        dx3 = self.d_conv3(dx4 + x3)
+#         print(dx3.shape)
+        dx2 = self.d_conv2(dx3 + x2)
+#         print(dx2.shape)
+        dx1 = self.d_conv1(dx2 + x1)
+        # print(dx1.shape)
+        return dx1
         pass
 
 
