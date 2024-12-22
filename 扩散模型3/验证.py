@@ -8,15 +8,14 @@ import random
 from PIL import Image
 
 model = diffusion_model()
-model.load_state_dict(torch.load('model_epoch_546_loss_128.86070843132174.pt'))
+model.load_state_dict(torch.load('model_epoch_423_loss_18.58823809331777.pt'))
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model.to(device)
 f_test = (r'C:\Users\86134\Desktop\作业\0重修\神经网络深度学习'
-          r'\课程项目\archive\VAL')
+          r'\课程项目\archive\TEST')
 batch_size = 64
 test_data = load_tensor_data(f_test, batch_size, 3, 64, 64,
                              '测试集加载完成')
-
 p = random.randint(0, test_data.shape[0] - 1)
 batch_img = test_data[p]
 blackboard = Image.new('RGB', (64 * batch_size, 64 * 3))

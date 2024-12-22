@@ -30,20 +30,27 @@ def load_tensor_data(f_img, batch_size, channel, height, width, end_msg=None):
     return data_tensor
 
 
-a = 0.7
+a = 0.6
 b = 0.9
+"""
+噪声添加:点噪声,线噪声,方块噪声,组合噪声
+"""
+
+"""
+"""
 
 
 def random_noise(batch_size):
-    noise = torch.ones((batch_size, 3, 64, 64))
+    noise = torch.randn((batch_size, 3, 64, 64)) + torch.randint(-200, 1200, (batch_size, 3, 64, 64)) / 100
+    noise[noise > 0] = 1
+    noise[noise < 0] = 0
+    noise[:, 1, :, :] = noise[:, 0, :, :]
+    noise[:, 2, :, :] = noise[:, 0, :, :]
     p_noise = a + (b - a) * random.random()
     for bs in range(batch_size):
-        if random.random() > p_noise:
+        if random.random() < p_noise:
             continue
-        x, y = random.randint(0, 16), random.randint(0, 16)
-        height = random.randint(32, 48)
-        width = random.randint(32, 48)
-        noise[bs, :, x:x + height, y:y + width] = 0
+        noise[bs] = 1
     return noise
     pass
 
