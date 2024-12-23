@@ -9,11 +9,13 @@ from 扩散模型 import diffusion_model
 from tqdm import tqdm
 
 batch_size = 192
-study_rare = 1e-3
+study_rare = 1e-6
 epochs = 100000000000000
-epoch = 0
+
 use_checkpoint_model = True
 best_val_loss = float('inf')
+best_val_loss = 73.7
+epoch = 495
 f_train = (r'C:\Users\86134\Desktop\作业\0重修\神经网络深度学习'
            r'\课程项目\archive\TRAIN')
 f_val = (r'C:\Users\86134\Desktop\作业\0重修\神经网络深度学习'
@@ -32,7 +34,7 @@ val_data.to(device)
 if use_checkpoint_model:
     model.load_state_dict(torch.load('checkpoint_model.pt'))
     pass
-optimizer = optim.Adam(model.parameters(), lr=study_rare)
+optimizer = optim.Adam(model.parameters(), lr=study_rare,weight_decay=1e-2)
 mse_loss = nn.MSELoss(reduction='sum')
 cross_loss = nn.CrossEntropyLoss(reduction='sum')
 model_list = []
@@ -71,8 +73,8 @@ while epoch < epochs:
     with open('val_log.txt', 'a+', encoding='utf_8') as log:
         log.write('epoch:{},test_loss:{}\n'.
                   format(epoch, val_loss / (val_data.shape[0] * val_data.shape[1])))
-    if val_loss < best_val_loss:
-        best_val_loss = val_loss
+    if val_loss / (val_data.shape[0] * val_data.shape[1]) < best_val_loss:
+        best_val_loss = val_loss / (val_data.shape[0] * val_data.shape[1])
         model_name = 'model_epoch_{}_loss_{}.pt'.format(epoch, val_loss / (val_data.shape[0] * val_data.shape[1]))
         model_list.append(model_name)
         torch.save(model.state_dict(), model_name)

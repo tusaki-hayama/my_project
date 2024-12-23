@@ -38,22 +38,43 @@ b = 0.9
 
 
 def gussi_noise(batch_size):
+    lr = 1.5 + random.random()
     noise = torch.randn((batch_size, 1, 64, 64))
-    noise[noise <= 2.2] = 1
-    noise[noise > 2.2] = 0
+    noise[noise <= lr] = 1
+    noise[noise > lr] = 0
+    for bs in range(batch_size):
+        if random.random() > 0.1:
+            continue
+        noise[bs] = 1
     return noise
     pass
 
 
 def line_noise(batch_size):
+    lr = 1 + random.random()
     noise = torch.ones((batch_size, 1, 64, 64))
-    p = torch.randn(64)
-    noise[:, :, p > 2.2] = 0
-    p = torch.randn(64)
-    noise[:, :, :, p > 2.2] = 0
+    for bs in range(batch_size):
+        if random.random() < 0.1:
+            continue
+        p = torch.randn(64)
+        noise[bs, :, p > lr] = 0
+        p = torch.randn(64)
+        noise[bs, :, :, p > lr] = 0
     return noise
     pass
 
+
+def block_noise(batch_size):
+    noise = torch.ones((batch_size, 1, 64, 64))
+    for bs in range(batch_size):
+        if random.random() < 0.1:
+            continue
+        x = random.randint(0, 31)
+        y = random.randint(0, 31)
+        length = random.randint(8, 32)
+        width = random.randint(8, 32)
+        noise[bs, :, x:x + width, y:y + length] = 0
+    return noise
 
 
 """
@@ -61,24 +82,22 @@ def line_noise(batch_size):
 
 
 def random_noise(batch_size):
-    noise = torch.randn((batch_size, 3, 64, 64)) + torch.randint(-200, 300, (batch_size, 3, 64, 64)) / 100
-    noise[noise > 0] = 1
-    noise[noise < 0] = 0
-    noise[:, 1, :, :] = noise[:, 0, :, :]
-    noise[:, 2, :, :] = noise[:, 0, :, :]
-    p_noise = a + (b - a) * random.random()
+    noise = torch.ones((batch_size, 1, 64, 64))
+    noise = noise * gussi_noise(batch_size) * line_noise(batch_size)* line_noise(batch_size) * block_noise(batch_size)*block_noise(batch_size)
     for bs in range(batch_size):
-        if random.random() < p_noise:
-            continue
-        noise[bs] = 1
+        if random.random() < 0.1:
+            noise[bs] = 1
     return noise
     pass
 
-
-noise = random_noise(256)
-blackboard = Image.new('RGB', (64 * 64, 64 * 4))
-# blackboard.paste(tensor2img(gussi_noise(256)),(0,0))
-for i in range(64):
-    blackboard.paste(tensor2img(gussi_noise(64)[i]), (64 * i, 0))
-    blackboard.paste(tensor2img(line_noise(64)[i]), (64 * i, 64 * 1))
-blackboard.show()
+# noise = random_noise(256)
+# bg = random_noise(64)
+# blackboard = Image.new('RGB', (64 * 64, 64 * 4))
+# # blackboard.paste(tensor2img(gussi_noise(256)),(0,0))
+# for i in range(64):
+#     # blackboard.paste(tensor2img(bg[i]), (64 * i, 0))
+#     blackboard.paste(tensor2img(bg[i]), (64 * i, 0))
+#     # blackboard.paste(tensor2img(gussi_noise(64)[i] * bg), (64 * i, 0))
+#     # blackboard.paste(tensor2img(line_noise(64)[i] * bg), (64 * i, 64 * 1))
+#     # blackboard.paste(tensor2img(block_noise(64)[i] * bg), (64 * i, 64 * 2))
+# blackboard.show()

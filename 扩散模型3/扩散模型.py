@@ -9,44 +9,44 @@ class diffusion_model(nn.Module):
     def __init__(self):
         super(diffusion_model, self).__init__()
         self.conv1 = nn.Sequential(
-            nn.Conv2d(3, 6, 3, padding=1),
+            nn.Conv2d(3, 64, 3, padding=1),
             nn.MaxPool2d(2),
-            nn.LeakyReLU()
+            nn.ReLU()
         )
         self.conv2 = nn.Sequential(
-            nn.Conv2d(6, 12, 3, padding=1),
+            nn.Conv2d(64, 32, 3, padding=1),
             nn.MaxPool2d(2),
-            nn.LeakyReLU()
+            nn.ReLU()
         )
         self.conv3 = nn.Sequential(
-            nn.Conv2d(12, 24, 3, padding=1),
+            nn.Conv2d(32, 16, 3, padding=1),
             nn.MaxPool2d(2),
-            nn.LeakyReLU()
+            nn.ReLU()
         )
         self.conv4 = nn.Sequential(
-            nn.Conv2d(24, 48, 3, padding=1),
+            nn.Conv2d(16, 8, 3, padding=1),
             nn.MaxPool2d(2),
-            nn.LeakyReLU()
+            nn.ReLU()
         )
         self.d_conv4 = nn.Sequential(
-            nn.ConvTranspose2d(48, 48, 2, 2),
-            nn.ConvTranspose2d(48, 24, 3, padding=1),
-            nn.LeakyReLU()
+            nn.ConvTranspose2d(8, 8, 2, 2),
+            nn.ConvTranspose2d(8, 16, 3, padding=1),
+            nn.ReLU()
         )
         self.d_conv3 = nn.Sequential(
-            nn.ConvTranspose2d(24, 24, 2, 2),
-            nn.ConvTranspose2d(24, 12, 3, padding=1),
-            nn.LeakyReLU()
+            nn.ConvTranspose2d(16, 16, 2, 2),
+            nn.ConvTranspose2d(16, 32, 3, padding=1),
+            nn.ReLU()
         )
         self.d_conv2 = nn.Sequential(
-            nn.ConvTranspose2d(12, 12, 2, 2),
-            nn.ConvTranspose2d(12, 6, 3, padding=1),
-            nn.LeakyReLU()
+            nn.ConvTranspose2d(32, 32, 2, 2),
+            nn.ConvTranspose2d(32, 64, 3, padding=1),
+            nn.ReLU()
         )
         self.d_conv1 = nn.Sequential(
-            nn.ConvTranspose2d(6, 6, 2, 2),
-            nn.ConvTranspose2d(6, 3, 3, padding=1),
-            nn.LeakyReLU()
+            nn.ConvTranspose2d(64, 64, 2, 2),
+            nn.ConvTranspose2d(64, 3, 3, padding=1),
+            nn.ReLU()
         )
         pass
 
