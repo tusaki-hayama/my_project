@@ -33,15 +33,35 @@ def load_tensor_data(f_img, batch_size, channel, height, width, end_msg=None):
 a = 0.6
 b = 0.9
 """
-噪声添加:点噪声,线噪声,方块噪声,组合噪声
+噪声添加:点噪声,线噪声,方块噪声,高斯噪声,组合噪声
 """
+
+
+def gussi_noise(batch_size):
+    noise = torch.randn((batch_size, 1, 64, 64))
+    noise[noise <= 2.2] = 1
+    noise[noise > 2.2] = 0
+    return noise
+    pass
+
+
+def line_noise(batch_size):
+    noise = torch.ones((batch_size, 1, 64, 64))
+    p = torch.randn(64)
+    noise[:, :, p > 2.2] = 0
+    p = torch.randn(64)
+    noise[:, :, :, p > 2.2] = 0
+    return noise
+    pass
+
+
 
 """
 """
 
 
 def random_noise(batch_size):
-    noise = torch.randn((batch_size, 3, 64, 64)) + torch.randint(-200, 1200, (batch_size, 3, 64, 64)) / 100
+    noise = torch.randn((batch_size, 3, 64, 64)) + torch.randint(-200, 300, (batch_size, 3, 64, 64)) / 100
     noise[noise > 0] = 1
     noise[noise < 0] = 0
     noise[:, 1, :, :] = noise[:, 0, :, :]
@@ -54,8 +74,11 @@ def random_noise(batch_size):
     return noise
     pass
 
-# noise = random_noise(64)
-# blackboard = Image.new('RGB', (64 * 64, 64))
-# for i in range(64):
-#     blackboard.paste(tensor2img(noise[i]), (64 * i, 0))
-# blackboard.show()
+
+noise = random_noise(256)
+blackboard = Image.new('RGB', (64 * 64, 64 * 4))
+# blackboard.paste(tensor2img(gussi_noise(256)),(0,0))
+for i in range(64):
+    blackboard.paste(tensor2img(gussi_noise(64)[i]), (64 * i, 0))
+    blackboard.paste(tensor2img(line_noise(64)[i]), (64 * i, 64 * 1))
+blackboard.show()

@@ -8,7 +8,7 @@ import random
 from PIL import Image
 
 model = diffusion_model()
-model.load_state_dict(torch.load('model_epoch_423_loss_18.58823809331777.pt'))
+model.load_state_dict(torch.load('checkpoint_model.pt'))
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model.to(device)
 f_test = (r'C:\Users\86134\Desktop\作业\0重修\神经网络深度学习'
