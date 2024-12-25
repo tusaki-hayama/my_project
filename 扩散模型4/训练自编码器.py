@@ -10,10 +10,10 @@ from tqdm import tqdm
 
 epoch = 0
 epochs = 10000000
-lr = 1e-4
+lr = 1e-5
 batch_size = 128
-checkpoint_loss = None
-checkpoint_model = None
+checkpoint_loss = 230
+checkpoint_model = '自编码器模型/checkpoint_auto_encoder.pt'
 best_loss = checkpoint_loss if checkpoint_loss is not None else float('inf')
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -59,7 +59,7 @@ while epoch < epochs:
         val_loss += loss.item()
     print('第{}轮验证,单图片损失为:{}'.format(epoch, val_loss / val_data.shape[0]))
     if val_loss / val_data.shape[0] < best_loss:
-        best_loss = val_loss
+        best_loss = val_loss / val_data.shape[0]
         print('正在保存模型参数')
         torch.save(model.state_dict(), '自编码器模型/checkpoint_auto_encoder.pt')
         model_name = '自编码器模型/model_epoch_{}_loss{}.pt'.format(epoch, val_loss / val_data.shape[0])
