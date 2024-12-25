@@ -8,14 +8,14 @@ from 工具类 import load_tensor_data, random_noise
 from 扩散模型 import diffusion_model
 from tqdm import tqdm
 
-batch_size = 192
-study_rare = 1e-6
+batch_size = 144
+study_rare = 1e-4
 epochs = 100000000000000
 
-use_checkpoint_model = True
+use_checkpoint_model = False
 best_val_loss = float('inf')
-best_val_loss = 73.7
-epoch = 495
+# best_val_loss = 649
+epoch = 0
 f_train = (r'C:\Users\86134\Desktop\作业\0重修\神经网络深度学习'
            r'\课程项目\archive\TRAIN')
 f_val = (r'C:\Users\86134\Desktop\作业\0重修\神经网络深度学习'

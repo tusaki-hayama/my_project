@@ -29,7 +29,7 @@ with open(f_train_log,'r',encoding='utf-8') as log:
             print('训练日志处理完毕')
             break
         rlog = rlog.split(':')
-        print(rlog)
+        # print(rlog)
         train_dict['x'].append(int(rlog[1][:-11]))
         train_dict['y'].append(float(rlog[2][:-1]))
 with open(f_val_log, 'r', encoding='utf') as log:
