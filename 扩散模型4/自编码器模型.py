@@ -34,22 +34,29 @@ class auto_encoder(nn.Module):
             nn.ConvTranspose2d(48, 24, 3, padding=1),
             nn.ReLU(),
             nn.ConvTranspose2d(24, 24, 2, 2),
-            nn.ConvTranspose2d(24, 12, 3,padding=1),
+            nn.ConvTranspose2d(24, 12, 3, padding=1),
             nn.ReLU(),
             nn.ConvTranspose2d(12, 12, 2, 2),
-            nn.ConvTranspose2d(12, 6, 3,padding=1),
+            nn.ConvTranspose2d(12, 6, 3, padding=1),
             nn.ReLU(),
             nn.ConvTranspose2d(6, 6, 2, 2),
-            nn.ConvTranspose2d(6, 3, 3,padding=1),
+            nn.ConvTranspose2d(6, 3, 3, padding=1),
             nn.ReLU(),
         )
         pass
 
     def forward(self, batch_image):
-        v = self.encoder(batch_image)
-        v = self.decoder(v)
-        return v
+        encode_v = self.encoder(batch_image)
+        build_image = self.decoder(encode_v)
+        return build_image
 
+    def encoder_image(self, batch_image):
+        encode_v = self.encoder(batch_image)
+        return encode_v
+
+    def decode_image(self, batch_v):
+        build_image = self.decoder(batch_v)
+        return build_image
 
 # from PIL import Image
 #
