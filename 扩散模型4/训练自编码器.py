@@ -1,4 +1,5 @@
 import os
+import random
 
 import torch
 from torchvision import transforms
@@ -10,10 +11,12 @@ from tqdm import tqdm
 
 epoch = 0
 epochs = 10000000
-lr = 1e-5
-batch_size = 128
-checkpoint_loss = 230
+lr = 1e-4
+batch_size = 256
+checkpoint_loss = 203
+checkpoint_loss = None
 checkpoint_model = '自编码器模型/checkpoint_auto_encoder.pt'
+checkpoint_model = None
 best_loss = checkpoint_loss if checkpoint_loss is not None else float('inf')
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -35,12 +38,12 @@ model_list = []
 while epoch < epochs:
     model.train()
     train_loss = 0
-    data2train = shuffle_and_div_batch(train_data, batch_size)
+    data2train = shuffle_and_div_batch(train_data, random.randint(64, batch_size))
     for gs in tqdm(range(data2train.shape[0])):
         X = data2train[gs].to(device)
         optimizer.zero_grad()
-        Y = model.forward(X)
-        loss = mse_loss(Y, X)
+        Y, loss = model.forward(X)
+        # loss = mse_loss(Y, X)
         train_loss += loss.item()
         loss.backward()
         optimizer.step()
@@ -54,8 +57,8 @@ while epoch < epochs:
     data2val = shuffle_and_div_batch(val_data, batch_size)
     for gs in tqdm(range(data2val.shape[0])):
         X = data2val[gs].to(device)
-        Y = model.forward(X)
-        loss = mse_loss(Y, X)
+        Y, loss = model.forward(X)
+        # loss = mse_loss(Y, X)
         val_loss += loss.item()
     print('第{}轮验证,单图片损失为:{}'.format(epoch, val_loss / val_data.shape[0]))
     if val_loss / val_data.shape[0] < best_loss:

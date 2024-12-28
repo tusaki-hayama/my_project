@@ -13,12 +13,13 @@ f_test = (r'C:\Users\86134\Desktop\作业\0重修\神经网络深度学习'
           r'\课程项目\archive\TEST')
 test_data = load_data(f_test, 3000)
 batch_size = 64
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 data2test = shuffle_and_div_batch(test_data, batch_size)
 model = auto_encoder()
 model.load_state_dict(torch.load('自编码器模型/checkpoint_auto_encoder.pt'))
 model.eval()
-
-predict_data = model.forward(data2test[0])
+model.to(device)
+predict_data,_ = model.forward(data2test[0].to(device))
 
 blackboard = Image.new('RGB', (64 * 2, 64 * batch_size))
 for i in range(batch_size):
