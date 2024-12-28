@@ -1,14 +1,17 @@
-"""
-@Time:2024/12/28下午6:39
-@Author:千岁红袖
-@File:扩散模型.py
-@Software:PyCharm
-"""
-import numpy as np
-import pandas as pd
-import os
-import time
-import sys
+import torch
+from torchvision import transforms
+from torch import nn
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-if __name__ == '__main__':
-    print("the process end success!")
+class diffusion_model(nn.Module):
+    def __init__(self):
+        super(diffusion_model,self).__init__()
+        pass
+    def forward(self,batch_image):
+        pass
+
+
+
+
+
+
