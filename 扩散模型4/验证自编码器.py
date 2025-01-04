@@ -20,7 +20,10 @@ model = auto_encoder()
 model.load_state_dict(torch.load('自编码器模型/checkpoint_auto_encoder.pt'))
 model.eval()
 model.to(device)
-predict_data, _ = model.forward(data2test[0].to(device))
+predict_v = model.encoder_image(data2test[0].to(device))
+print(predict_v.shape)
+predict_v = predict_v
+predict_data = model.decode_image(predict_v)
 
 blackboard = Image.new('RGB', (64 * 2, 64 * batch_size))
 for i in range(batch_size):
