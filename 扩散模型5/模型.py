@@ -26,78 +26,78 @@ class auto_encoder(nn.Module):
         self.encoder = nn.Sequential(
             nn.Conv2d(3, 8, 3, padding=1),
             nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.ReLU(),
+            nn.LeakyReLU(1e-4),
             nn.Conv2d(8, 16, 3, padding=1),
             nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.ReLU(),
+            nn.LeakyReLU(1e-4),
             nn.Conv2d(16, 32, 3, padding=1),
             nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.ReLU(),
+            nn.LeakyReLU(1e-4),
             nn.Conv2d(32, 64, 3, padding=1),
             nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.ReLU(),
+            nn.LeakyReLU(1e-4),
             nn.Conv2d(64, 128, 3, padding=1),
             nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.ReLU(),
+            nn.LeakyReLU(1e-4),
             nn.Conv2d(128, 256, 3, padding=1),
             nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.ReLU()
+            nn.LeakyReLU(1e-4),
         )
         self.decoder = nn.Sequential(
             nn.ConvTranspose2d(256, 128, 4, stride=2, padding=1),
-            nn.ReLU(),
+            nn.LeakyReLU(1e-4),
             nn.ConvTranspose2d(128, 64, 4, stride=2, padding=1),
-            nn.ReLU(),
+            nn.LeakyReLU(1e-4),
             nn.ConvTranspose2d(64, 32, 4, stride=2, padding=1),
-            nn.ReLU(),
+            nn.LeakyReLU(1e-4),
             nn.ConvTranspose2d(32, 16, 4, stride=2, padding=1),
-            nn.ReLU(),
+            nn.LeakyReLU(1e-4),
             nn.ConvTranspose2d(16, 8, 4, stride=2, padding=1),
-            nn.ReLU(),
+            nn.LeakyReLU(1e-4),
             nn.ConvTranspose2d(8, 3, 4, stride=2, padding=1),
-            nn.ReLU(),
+            nn.LeakyReLU(1e-4),
         )
         pass
         self.k1 = const_conv_layer(torch.Tensor([
             [0, -1, 0],
             [-1, 5, -1],
             [0, -1, 0],
-        ]))
+        ])/3)
         self.k2 = const_conv_layer(torch.Tensor([
             [1, 1, 1],
             [1, 1, 1],
             [1, 1, 1],
-        ]))
+        ])/27)
         self.k3 = const_conv_layer(torch.Tensor([
             [-1, 0, 1],
             [-2, 0, 2],
             [-1, 0, 1],
-        ]))
+        ])/3)
         self.k4 = const_conv_layer(torch.Tensor([
             [1, 0, -1],
             [2, 0, -2],
             [1, 0, -1],
-        ]))
+        ])/3)
         self.k5 = const_conv_layer(torch.Tensor([
             [-1, 2, -1],
             [-1, 2, -1],
             [-1, 2, -1],
-        ]))
+        ])/3)
         self.k6 = const_conv_layer(torch.Tensor([
             [-1, -1, -1],
             [2, 2, 2],
             [-1, -1, -1],
-        ]))
+        ])/3)
         self.k7 = const_conv_layer(torch.Tensor([
             [2, -1, -1],
             [-1, 2, -1],
             [-1, -1, 2],
-        ]))
+        ])/3)
         self.k8 = const_conv_layer(torch.Tensor([
             [-1, -1, 2],
             [-1, 2, -1],
             [2, -1, -1],
-        ]))
+        ])/3)
 
     def forward(self, batch_x, batch_y):
         encode_x = self.encoder(batch_x)
