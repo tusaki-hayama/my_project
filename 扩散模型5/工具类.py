@@ -87,7 +87,7 @@ def random_noise(batch_size):
     noise = torch.ones((batch_size, 1, 64, 64))
     noise = noise * gussi_noise(batch_size) * line_noise(batch_size)* line_noise(batch_size) * block_noise(batch_size)*block_noise(batch_size)
     for bs in range(batch_size):
-        if random.random() < 0.1:
+        if random.random() < 0.5:
             noise[bs] = 1
     return noise
     pass

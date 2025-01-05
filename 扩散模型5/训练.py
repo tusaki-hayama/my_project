@@ -13,9 +13,9 @@ epoch = 0
 epochs = 10000000000
 lr = 1e-4
 batch_size = 256
-checkpoint_epoch = 0
+checkpoint_epoch = 120
 checkpoint_epoch = None
-checkpoint_loss = 203
+checkpoint_loss = 318.49
 checkpoint_loss = None
 checkpoint_model = '模型日志/checkpoint_auto_encoder.pt'
 checkpoint_model = None
@@ -42,67 +42,38 @@ while epoch < epochs:
     model.train()
     train_loss = 0
     l_mse_loss = 0
-    l1_loss = 0
-    l2_loss = 0
-    l3_loss = 0
-    l4_loss = 0
-    l5_loss = 0
-    l6_loss = 0
-    l7_loss = 0
-    l8_loss = 0
+    l_conv_loss = 0
     bs = random.randint(64, batch_size)
     data2train = shuffle_and_div_batch(train_data, bs)
     for gs in tqdm(range(data2train.shape[0])):
         X = data2train[gs] * random_noise(bs)
+        # X = data2train[gs]
         Y = data2train[gs]
         optimizer.zero_grad()
-        predict_Y, l_mse, l1, l2, l3, l4, l5, l6, l7, l8 = model.forward(X.to(device), Y.to(device))
-
-
-
+        predict_Y, l_mse, l_conv = model.forward(X.to(device), Y.to(device))
         l_mse_loss += l_mse.item()
-        l1_loss += l1.item()  # 锐化损失
-        l2_loss += l2.item()  # 平均损失
-        l3_loss += l3.item()  # 左边缘损失
-        l4_loss += l4.item()  # 右边缘损失
-        l5_loss += l5.item()  # 水平损失
-        l6_loss += l6.item()  # 竖直损失
-        l7_loss += l7.item()  # 45度损失
-        l8_loss += l8.item()  # 45度损失
-        loss = l_mse + l1/l1.item() + l2/l2.item()+ l3/l3.item() + l4/l4.item() + l5/l5.item() + l6/l6.item() + l7/l7.item() + l8/l8.item()
+        l_conv_loss += l_conv.item()
+        loss = l_mse + l_conv
         train_loss += loss.item()
         loss.backward()
         optimizer.step()
+    model.change_loss()
     print('第{}轮训练,单图片总卷积损失为:{}'
           .format(epoch, train_loss / train_data.shape[0]))
     print('第{}轮训练,单图片mse损失为:{}'
           .format(epoch, l_mse_loss / train_data.shape[0]))
-    print('第{}轮训练,单图片l1损失为:{}'
-          .format(epoch, l1_loss / train_data.shape[0]))
-    print('第{}轮训练,单图片l2损失为:{}'
-          .format(epoch, l2_loss / train_data.shape[0]))
-    print('第{}轮训练,单图片l3损失为:{}'
-          .format(epoch, l3_loss / train_data.shape[0]))
-    print('第{}轮训练,单图片l4损失为:{}'
-          .format(epoch, l4_loss / train_data.shape[0]))
-    print('第{}轮训练,单图片l5损失为:{}'
-          .format(epoch, l5_loss / train_data.shape[0]))
-    print('第{}轮训练,单图片l6损失为:{}'
-          .format(epoch, l6_loss / train_data.shape[0]))
-    print('第{}轮训练,单图片l7损失为:{}'
-          .format(epoch, l7_loss / train_data.shape[0]))
-    print('第{}轮训练,单图片l8损失为:{}'
-          .format(epoch, l8_loss / train_data.shape[0]))
+    print('第{}轮训练,单图片conv损失为:{}'
+          .format(epoch, l_conv_loss / train_data.shape[0]))
 
-    model.eval()
     if epoch % 3 != 0:
         continue
+    model.eval()
     val_loss = 0
     data2val = shuffle_and_div_batch(val_data, batch_size)
     for gs in tqdm(range(data2val.shape[0])):
         X = data2val[gs] * random_noise(batch_size)
         Y = data2val[gs]
-        predict_Y, l_mse, l1, l2, l3, l4, l5, l6, l7, l8 = model.forward(X.to(device), Y.to(device))
+        predict_Y, l_mse, l_conv = model.forward(X.to(device), Y.to(device))
         val_loss += l_mse.item()
     print('第{}轮验证,单图片mse损失为:{}'
           .format(epoch, val_loss / val_data.shape[0]))
