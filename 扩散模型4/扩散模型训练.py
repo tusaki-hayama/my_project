@@ -12,9 +12,9 @@ from PIL import Image
 
 epochs = 10000000000
 epoch = 0
-batch_size = 64
-time_step = 20
-lr = 1e-4
+batch_size = 256
+time_step = 50
+lr = 1e-1
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 auto_model = auto_encoder()
 auto_model.to(device)
@@ -34,8 +34,10 @@ f_train = (r'C:\Users\86134\Desktop\作业\0重修\神经网络深度学习'
            r'\课程项目\archive\TRAIN')
 f_val = (r'C:\Users\86134\Desktop\作业\0重修\神经网络深度学习'
          r'\课程项目\archive\VAL')
-train_data = load_data(f_train, point_num=3000)
-val_data = load_data(f_val, point_num=3000)
+train_data = load_data(f_train)
+print('train_data:{}'.format(train_data.shape))
+val_data = load_data(f_val)
+print('val_data:{}'.format(val_data.shape))
 beta = torch.linspace(0, 1, time_step)
 alpha = 1 - beta
 alpha_mul = torch.cumprod(alpha, dim=0)
@@ -44,15 +46,16 @@ model_list = []
 while epoch < epochs:
     epoch += 1
     # 准备训练数据
-    data2train = shuffle_and_div_batch(train_data, random.randint(64, batch_size)).to(device)
-    noise_data2train = data2train * random_noise(batch_size).to(device)
-    train_loss = 0
     diffusion_model.train()
+    bs = random.randint(64, batch_size)
+    data2train = shuffle_and_div_batch(train_data, bs)
+    noise_data2train = data2train * random_noise(bs)
+    train_loss = 0
     for gs in tqdm(range(data2train.shape[0])):
-        v = auto_model.encoder_image(data2train[gs])
-        v_noise = auto_model.encoder_image(noise_data2train[gs])
+        v = auto_model.encoder_image(data2train[gs].to(device))
+        v_noise = auto_model.encoder_image(noise_data2train[gs].to(device))
         random_t = random.randint(1, time_step - 1)
-        X = alpha_mul[random_t] * v_noise + (1 - alpha_mul[random_t]) * torch.randn_like(v_noise)
+        X = alpha_mul[random_t] * v_noise + (1 - alpha_mul[random_t]) * torch.randn_like(v_noise) + random_t/time_step
         Y = alpha_mul[random_t - 1] * v + (1 - alpha_mul[random_t - 1]) * (torch.randn_like(v) + v_noise)
         # 训练
         diffusion_model.train()
@@ -71,13 +74,13 @@ while epoch < epochs:
         continue
     diffusion_model.eval()
     val_loss = 0
-    data2val = shuffle_and_div_batch(val_data, random.randint(64, batch_size)).to(device)
-    noise_data2val = data2val * random_noise(batch_size).to(device)
+    data2val = shuffle_and_div_batch(val_data, batch_size)
+    noise_data2val = data2val * random_noise(batch_size)
     for gs in tqdm(range(data2val.shape[0])):
-        v = auto_model.encoder_image(data2val[gs])
-        v_noise = auto_model.encoder_image(noise_data2val[gs])
+        v = auto_model.encoder_image(data2val[gs].to(device))
+        v_noise = auto_model.encoder_image(noise_data2val[gs].to(device))
         random_t = random.randint(1, time_step - 1)
-        X = alpha_mul[random_t] * v_noise + (1 - alpha_mul[random_t]) * torch.randn_like(v_noise)
+        X = alpha_mul[random_t] * v_noise + (1 - alpha_mul[random_t]) * torch.randn_like(v_noise) + random_t/time_step
         Y = alpha_mul[random_t - 1] * v + (1 - alpha_mul[random_t - 1]) * (torch.randn_like(v) + v_noise)
         # 训练
         X.to(device)

@@ -9,39 +9,30 @@ class diffusion_model(nn.Module):
     def __init__(self):
         super(diffusion_model, self).__init__()
         self.linear1 = nn.Sequential(
-            nn.Linear(4096, 1024),
+            nn.Linear(4096, 512),
             nn.ReLU(),
         )
         self.linear2 = nn.Sequential(
-            nn.Linear(1024, 256),
-            nn.ReLU(),
-        )
-        self.linear3 = nn.Sequential(
-            nn.Linear(256, 64),
-            nn.ReLU(),
-        )
-        self.d_linear3 = nn.Sequential(
-            nn.Linear(64, 256),
+            nn.Linear(512, 64),
             nn.ReLU(),
         )
         self.d_linear2 = nn.Sequential(
-            nn.Linear(256, 1024),
+            nn.Linear(64, 512),
             nn.ReLU(),
         )
         self.d_linear1 = nn.Sequential(
-            nn.Linear(1024, 4096),
-            nn.ReLU()
+            nn.Linear(512, 4096),
+            nn.ReLU(),
         )
+
         pass
 
     def forward(self, batch_image):
         x1 = self.linear1(batch_image)
         x2 = self.linear2(x1)
-        x3 = self.linear3(x2)
-        dx1 = self.d_linear3(x3)
-        dx2 = self.d_linear2(dx1)
-        dx3 = self.d_linear1(dx2)
-        return dx3
+        dx1 = self.d_linear2(x2)
+        dx2 = self.d_linear1(dx1)
+        return dx2
         pass
 
 
