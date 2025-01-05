@@ -62,12 +62,12 @@ class auto_encoder(nn.Module):
             [0, -1, 0],
             [-1, 5, -1],
             [0, -1, 0],
-        ]) / 3)
+        ]))
         self.k2 = const_conv_layer(torch.Tensor([
             [1, 1, 1],
             [1, 1, 1],
             [1, 1, 1],
-        ]) / 27)
+        ]))
         self.k3 = const_conv_layer(torch.Tensor([
             [-1, 0, 1],
             [-2, 0, 2],
@@ -112,7 +112,7 @@ class auto_encoder(nn.Module):
         loss_k6 = mse_loss(self.k6(batch_y), self.k6(decode_x))
         loss_k7 = mse_loss(self.k7(batch_y), self.k7(decode_x))
         loss_k8 = mse_loss(self.k8(batch_y), self.k8(decode_x))
-        return encode_x, loss_mse, loss_k1, loss_k2, loss_k3, loss_k4, loss_k5, loss_k6, loss_k7, loss_k8
+        return decode_x, loss_mse, loss_k1, loss_k2, loss_k3, loss_k4, loss_k5, loss_k6, loss_k7, loss_k8
 
 
 from PIL import Image

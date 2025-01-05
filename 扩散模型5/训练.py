@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 epoch = 0
 epochs = 10000000000
-lr = 1e-3
+lr = 1e-4
 batch_size = 256
 checkpoint_epoch = 0
 checkpoint_epoch = None
@@ -57,23 +57,40 @@ while epoch < epochs:
         Y = data2train[gs]
         optimizer.zero_grad()
         predict_Y, l_mse, l1, l2, l3, l4, l5, l6, l7, l8 = model.forward(X.to(device), Y.to(device))
-        loss = l_mse + l1 + l2 + l3 + l4 + l5 + l6 + l7 + l8
+        loss = random.random()*l_mse + l1 + l2 + l3 + l4 + l5 + l6 + l7 + l8
         train_loss += loss.item()
         l_mse_loss += l_mse.item()
-        l1_loss += l1.item()
-        l2_loss += l2.item()
-        l3_loss += l3.item()
-        l4_loss += l4.item()
-        l5_loss += l5.item()
-        l6_loss += l6.item()
-        l7_loss += l7.item()
-        l8_loss += l8.item()
+        l1_loss += l1.item()  # 锐化损失
+        l2_loss += l2.item()  # 平均损失
+        l3_loss += l3.item()  # 左边缘损失
+        l4_loss += l4.item()  # 右边缘损失
+        l5_loss += l5.item()  # 水平损失
+        l6_loss += l6.item()  # 竖直损失
+        l7_loss += l7.item()  # 45度损失
+        l8_loss += l8.item()  # 45度损失
         loss.backward()
         optimizer.step()
     print('第{}轮训练,单图片总卷积损失为:{}'
           .format(epoch, train_loss / train_data.shape[0]))
     print('第{}轮训练,单图片mse损失为:{}'
           .format(epoch, l_mse_loss / train_data.shape[0]))
+    print('第{}轮训练,单图片l1损失为:{}'
+          .format(epoch, l1_loss / train_data.shape[0]))
+    print('第{}轮训练,单图片l2损失为:{}'
+          .format(epoch, l2_loss / train_data.shape[0]))
+    print('第{}轮训练,单图片l3损失为:{}'
+          .format(epoch, l3_loss / train_data.shape[0]))
+    print('第{}轮训练,单图片l4损失为:{}'
+          .format(epoch, l4_loss / train_data.shape[0]))
+    print('第{}轮训练,单图片l5损失为:{}'
+          .format(epoch, l5_loss / train_data.shape[0]))
+    print('第{}轮训练,单图片l6损失为:{}'
+          .format(epoch, l6_loss / train_data.shape[0]))
+    print('第{}轮训练,单图片l7损失为:{}'
+          .format(epoch, l7_loss / train_data.shape[0]))
+    print('第{}轮训练,单图片l8损失为:{}'
+          .format(epoch, l8_loss / train_data.shape[0]))
+
     model.eval()
     if epoch % 3 != 0:
         continue
