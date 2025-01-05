@@ -30,17 +30,17 @@ class diffusion_model(nn.Module):
         )
         self.d_linear1 = nn.Sequential(
             nn.Linear(1024, 4096),
-            nn.Tanh()
+            nn.ReLU()
         )
         pass
 
     def forward(self, batch_image):
         x1 = self.linear1(batch_image)
-        x2 = self.linear1(x1)
-        x3 = self.linear1(x2)
-        dx1 = self.linear1(x3)
-        dx2 = self.linear1(dx1)
-        dx3 = self.linear1(dx2)
+        x2 = self.linear2(x1)
+        x3 = self.linear3(x2)
+        dx1 = self.d_linear3(x3)
+        dx2 = self.d_linear2(dx1)
+        dx3 = self.d_linear1(dx2)
         return dx3
         pass
 
