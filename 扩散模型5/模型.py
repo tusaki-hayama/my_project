@@ -7,8 +7,9 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 mse_loss = nn.MSELoss(reduction='sum')
 
 
-def const_conv_layer(kernel, channel=3):
-    kernel = kernel.unsqueeze(0).repeat(channel, 1, 1)
+def const_conv_layer(kernel):
+    kernel = kernel.unsqueeze(0).repeat(3, 1, 1)
+    kernel = kernel.unsqueeze(0)
     layer = nn.Conv2d(3, 1, 3, padding=1)
     layer.eval()
     layer.weight = nn.Parameter(kernel)
@@ -40,7 +41,7 @@ class auto_encoder(nn.Module):
             nn.ReLU(),
             nn.Conv2d(128, 256, 3, padding=1),
             nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.Tanh()
+            nn.ReLU()
         )
         self.decoder = nn.Sequential(
             nn.ConvTranspose2d(256, 128, 4, stride=2, padding=1),
@@ -54,7 +55,7 @@ class auto_encoder(nn.Module):
             nn.ConvTranspose2d(16, 8, 4, stride=2, padding=1),
             nn.ReLU(),
             nn.ConvTranspose2d(8, 3, 4, stride=2, padding=1),
-            nn.Tanh(),
+            nn.ReLU(),
         )
         pass
         self.k1 = const_conv_layer(torch.Tensor([
@@ -102,6 +103,7 @@ class auto_encoder(nn.Module):
         encode_x = self.encoder(batch_x)
         decode_x = self.decoder(encode_x)
         loss_mse = mse_loss(batch_y, decode_x)
+        # print(batch_y.shape, decode_x.shape)
         loss_k1 = mse_loss(self.k1(batch_y), self.k1(decode_x))
         loss_k2 = mse_loss(self.k2(batch_y), self.k2(decode_x))
         loss_k3 = mse_loss(self.k3(batch_y), self.k3(decode_x))
@@ -123,4 +125,4 @@ v_img = v_img.view(-1, 3, 64, 64)
 print(v_img.shape)
 test_model = auto_encoder()
 print('模型内参数:')
-# test_model.forward(v_img)
+test_model.forward(v_img, v_img)
