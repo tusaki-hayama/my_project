@@ -59,7 +59,7 @@ while epoch < epochs:
         optimizer.step()
     with open('模型日志/train_log.txt', 'a+', encoding='utf') as log:
         log.write('epoch:{},train_loss:{}\n'.
-                  format(epoch, train_loss / train_data.shape[0]))
+                  format(epoch, l_mse_loss/ train_data.shape[0]))
     print('第{}轮训练,单图片总卷积损失为:{}'
           .format(epoch, train_loss / train_data.shape[0]))
     print('第{}轮训练,单图片mse损失为:{}'
