@@ -13,9 +13,9 @@ epoch = 0
 epochs = 10000000000
 lr = 1e-4
 batch_size = 256
-checkpoint_epoch = 120
+checkpoint_epoch = 2832
 checkpoint_epoch = None
-checkpoint_loss = 318.49
+checkpoint_loss = 123.8
 checkpoint_loss = None
 checkpoint_model = '模型日志/checkpoint_auto_encoder.pt'
 checkpoint_model = None
@@ -46,7 +46,7 @@ while epoch < epochs:
     bs = random.randint(64, batch_size)
     data2train = shuffle_and_div_batch(train_data, bs)
     for gs in tqdm(range(data2train.shape[0])):
-        X = data2train[gs] * random_noise(bs)
+        X = data2train[gs]*random_noise(bs)
         # X = data2train[gs]
         Y = data2train[gs]
         optimizer.zero_grad()
@@ -57,13 +57,16 @@ while epoch < epochs:
         train_loss += loss.item()
         loss.backward()
         optimizer.step()
-
+    with open('模型日志/train_log.txt', 'a+', encoding='utf') as log:
+        log.write('epoch:{},train_loss:{}\n'.
+                  format(epoch, train_loss / train_data.shape[0]))
     print('第{}轮训练,单图片总卷积损失为:{}'
           .format(epoch, train_loss / train_data.shape[0]))
     print('第{}轮训练,单图片mse损失为:{}'
           .format(epoch, l_mse_loss / train_data.shape[0]))
     print('第{}轮训练,单图片conv损失为:{}'
           .format(epoch, l_conv_loss / train_data.shape[0]))
+
 
     if epoch % 3 != 0:
         continue
@@ -72,7 +75,7 @@ while epoch < epochs:
     val_loss = 0
     data2val = shuffle_and_div_batch(val_data, batch_size)
     for gs in tqdm(range(data2val.shape[0])):
-        X = data2val[gs] * random_noise(batch_size)
+        X = data2val[gs]*random_noise(batch_size)
         Y = data2val[gs]
         predict_Y, l_mse, l_conv = model.forward(X.to(device), Y.to(device))
         val_loss += l_mse.item()
@@ -86,6 +89,9 @@ while epoch < epochs:
         torch.save(model.state_dict(), model_name)
         model_list.append(model_name)
         print('模型参数保存完成')
+        with open('模型日志/val_log.txt', 'a+', encoding='utf') as log:
+            log.write('epoch:{},val_loss:{}\n'.
+                      format(epoch, val_loss / val_data.shape[0]))
         if len(model_list) > 10:
             try:
                 del_name = model_list[0]

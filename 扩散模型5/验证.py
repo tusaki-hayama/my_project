@@ -15,7 +15,7 @@ test_data = load_data(f_test, 3000)
 batch_size = 64
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 data2test = shuffle_and_div_batch(test_data, batch_size)
-# data2test[0] = data2test[0]*random_noise(batch_size)
+data2test[0] = data2test[0]*random_noise(batch_size)
 # data2test[:,:,:,16:48,16:48]=0
 model = auto_encoder()
 model.load_state_dict(torch.load('模型日志/checkpoint_auto_encoder.pt'))

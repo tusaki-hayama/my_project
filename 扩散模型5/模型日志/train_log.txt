@@ -1,0 +1,11 @@
+epoch:1,train_loss:18909.94073815517
+epoch:2,train_loss:5272.953621948662
+epoch:3,train_loss:4584.500517842628
+epoch:4,train_loss:5242.437386926767
+epoch:5,train_loss:4914.166889535646
+epoch:6,train_loss:4645.130361146071
+epoch:7,train_loss:4135.497298532998
+epoch:8,train_loss:3952.021000485068
+epoch:9,train_loss:3850.522608091455
+epoch:10,train_loss:2905.110089082042
+epoch:11,train_loss:2877.765009242508
