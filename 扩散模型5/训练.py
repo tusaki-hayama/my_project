@@ -13,6 +13,7 @@ epoch = 0
 epochs = 10000000000
 lr = 1e-4
 batch_size = 256
+# 保存的模型参数,用于继续训练
 checkpoint_epoch = 2832
 checkpoint_epoch = None
 checkpoint_loss = 123.8
@@ -21,8 +22,10 @@ checkpoint_model = '模型日志/checkpoint_auto_encoder.pt'
 checkpoint_model = None
 best_loss = checkpoint_loss if checkpoint_loss is not None else float('inf')
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# 替换成训练集地址
 f_train = (r'C:\Users\86134\Desktop\作业\0重修\神经网络深度学习'
            r'\课程项目\archive\TRAIN')
+# 替换成测试集地址
 f_val = (r'C:\Users\86134\Desktop\作业\0重修\神经网络深度学习'
          r'\课程项目\archive\VAL')
 train_data = load_data(f_train)
