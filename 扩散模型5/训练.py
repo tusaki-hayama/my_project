@@ -57,7 +57,7 @@ while epoch < epochs:
         train_loss += loss.item()
         loss.backward()
         optimizer.step()
-    model.change_loss()
+
     print('第{}轮训练,单图片总卷积损失为:{}'
           .format(epoch, train_loss / train_data.shape[0]))
     print('第{}轮训练,单图片mse损失为:{}'
@@ -68,6 +68,7 @@ while epoch < epochs:
     if epoch % 3 != 0:
         continue
     model.eval()
+    model.change_loss()
     val_loss = 0
     data2val = shuffle_and_div_batch(val_data, batch_size)
     for gs in tqdm(range(data2val.shape[0])):

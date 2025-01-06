@@ -26,7 +26,7 @@ class auto_encoder(nn.Module):
             nn.Conv2d(128, 256, 3, 2, 1),
             nn.ReLU(),
             nn.Conv2d(256, 512, 3, 2, 1),
-            nn.ReLU(),
+            nn.Tanh(),
         )
         self.decoder = nn.Sequential(
             nn.ConvTranspose2d(512, 256, 4,stride=2,padding=1),
